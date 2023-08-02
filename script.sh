@@ -39,15 +39,28 @@ repos=(
   # Add more repositories as needed
 )
 
-# Loop through the repositories and clone them
+# Loop through the repositories and clone or pull them
 for repo in "${repos[@]}"; do
-  log_message "Cloning ${repo}"
-  if git clone "https://${username}:${token}@${repo}" >> "$log_file" 2>&1; then
-    log_message "Successfully cloned ${repo}"
+  repo_url="https://${username}:${token}@${repo}"
+  repo_name=$(basename "$repo" .git)
+  if [ -d "$repo_name" ]; then
+    log_message "Repository ${repo} already exists, pulling the latest version"
+    cd "$repo_name" || { log_message "Failed to navigate to ${repo_name}"; exit 1; }
+    if git pull "$repo_url" >> "$log_file" 2>&1; then
+      log_message "Successfully pulled the latest version of ${repo}"
+    else
+      log_message "Failed to pull the latest version of ${repo}"
+      exit 1
+    fi
+    cd .. || { log_message "Failed to navigate back"; exit 1; }
   else
-    log_message "Failed to clone ${repo}"
-    sleep 3
-    exit 1
+    log_message "Cloning ${repo}"
+    if git clone "$repo_url" >> "$log_file" 2>&1; then
+      log_message "Successfully cloned ${repo}"
+    else
+      log_message "Failed to clone ${repo}"
+      exit 1
+    fi
   fi
 done
 
