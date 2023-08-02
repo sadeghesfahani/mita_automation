@@ -20,7 +20,11 @@ if [ -z "$username" ] || [ -z "$token" ]; then
   exit 1
 fi
 
-# Navigate to the chosen directory
+# Navigate to the chosen directory or create it if it doesn't exist
+if [ ! -d "/var/www" ]; then
+  mkdir -p /var/www || { echo "Failed to create /var/www" >> "$log_file"; exit 1; }
+fi
+
 cd /var/www || { echo "Failed to navigate to /var/www" >> "$log_file"; exit 1; }
 
 # Log the start of the process
