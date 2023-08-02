@@ -3,13 +3,20 @@
 # Log file path
 log_file="/var/log/deploy_automation.log"
 
+# Log a message to the log file and show it in console
+log_message() {
+  message="$1"
+  echo "$message" | tee -a "$log_file"
+}
+
 # Get username and token from environment variables
 username="$GITHUB_USERNAME"
 token="$GITHUB_TOKEN"
 
 # Check if GITHUB_USERNAME and GITHUB_TOKEN are set
 if [ -z "$username" ] || [ -z "$token" ]; then
-  echo "GITHUB_USERNAME and/or GITHUB_TOKEN are not set in environment variables. Exiting." >> "$log_file"
+  log_message "GITHUB_USERNAME and/or GITHUB_TOKEN are not set in environment variables. Exiting."
+  sleep 3
   exit 1
 fi
 
@@ -30,13 +37,15 @@ repos=(
 
 # Loop through the repositories and clone them
 for repo in "${repos[@]}"; do
-  echo "Cloning ${repo}" >> "$log_file"
+  log_message "Cloning ${repo}"
   if git clone "https://${username}:${token}@${repo}" >> "$log_file" 2>&1; then
-    echo "Successfully cloned ${repo}" >> "$log_file"
+    log_message "Successfully cloned ${repo}"
   else
-    echo "Failed to clone ${repo}" >> "$log_file"
+    log_message "Failed to clone ${repo}"
+    sleep 3
+    exit 1
   fi
 done
 
 # Log the end of the process
-echo "Cloning process completed at $(date)" >> "$log_file"
+log_message "Cloning process completed at $(date)"
