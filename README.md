@@ -66,12 +66,39 @@ sudo swapon -s
 ```
 </details>
 
+## how to create a disk for /var
+
+<details>
+  <summary>1. Create a disk with 20GB size</summary>
+    this part is mostly done by your cloud provider
+</details>
+
+<details>
+  <summary>2. Create a partition with 20GB size</summary>
+    If the disk is not yet partitioned, you'll need to create a partition on it. Use fdisk or another partitioning tool to create the partition.
+
+```bash
+sudo fdisk /dev/sdx
+```
+
+Follow the interactive prompts to create a partition, and set its type to 'LVM' (usually type code 30, we need `t` for that).
+</details>
+
+<details>
+<summary>3. Create system file</summary>
+
+We need to give a system file to the partition
+
+```bash
+sudo mkfs.ext4 /dev/sdx1
+```
+</details>
 
 
 
 # how to run the script
 
-for running this script properly you need to put `GITHUB_TOKEN` and `GITHUB_USERNAME` in your environment variables
+for running this script properly, you need to put `GITHUB_TOKEN` and `GITHUB_USERNAME` in your environment variables
 
 ```bash
 cd ./etc
