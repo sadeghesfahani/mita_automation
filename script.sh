@@ -117,3 +117,42 @@ log_message "Enable the firewall is done"
 # Check the status to make sure the rules were applied correctly
 ufw_status=$(ufw status verbose)
 log_message "ufw status: ${ufw_status}"
+
+# install docker desktop
+
+# Add docker to repository (install prerequisites)
+sudo apt-get install ca-certificates curl gnupg -y
+log_message "Installing packages is done"
+
+# Add Docker’s official GPG key:
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+log_message "GOG key sets up is done"
+
+# Set up the repository
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" |
+  sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
+
+log_message "Setting up the repository is done."
+
+# update the apt package index
+sudo apt-get update
+log_message "update the apt package index is done"
+
+# install the latest version of Docker Engine and containerd
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y || {
+  log_message "Failed to install Docker components"
+  exit 1
+}
+log_message "installing docker is done"
+
+# Start and enable the Docker service
+sudo systemctl start docker
+sudo systemctl enable docker || {
+  log_message "Failed to start or enable Docker"
+  exit 1
+}
+log_message "Running at the startup is set"
