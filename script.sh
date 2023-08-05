@@ -219,9 +219,9 @@ cd /var/www/MiTA-website || {
 }
 
 log_message "installing nextJS module started"
-npm install
-npm run build
-npm install pm2@latest -g
+sudo npm install --force
+sudo npm run build
+sudo npm install pm2@latest -g
 pm2 start npm --name "mita-website" -- start -p 3000
 pm2 startup
 pm2 save
@@ -231,7 +231,7 @@ log_message "installing nextJS module finished"
 sudo rm /etc/nginx/sites-enabled/default
 sudo rm /etc/nginx/sites-available/default
 sudo cp ./main.conf /etc/nginx/sites-available/default
-sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+sudo ln /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
 sudo nginx -t
 sudo systemctl restart nginx
