@@ -221,7 +221,7 @@ cd /var/www/MiTA-website || {
 log_message "installing nextJS module started"
 npm install
 npm run build
-sudo apt install pm2 -y
+npm install pm2@latest -g
 pm2 start npm --name "mita-website" -- start -p 3000
 pm2 startup
 pm2 save
