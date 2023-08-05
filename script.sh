@@ -188,11 +188,24 @@ cd /var/www/Mitanor_frontend || {
   exit 1
 }
 
-
+DIRECTORY="/var/www/clever-safety/html"
 log_message "installing vuejs module started"
 export NODE_OPTIONS=--openssl-legacy-provider
 npm install
 npm run build
+
+# Check if the directory exists.
+if [ -d "$DIRECTORY" ]; then
+  log_message "Directory already exists."
+else
+  # Try to create the directory.
+  if sudo mkdir -p "$DIRECTORY"; then
+    log_message "Successfully created the directory."
+  else
+    log_message "Cannot create the directory."
+    exit 1  # Exit the script with an error status.
+  fi
+fi
 
 sudo cp -r ./dist/* /var/www/clever-safety/html
 
@@ -200,8 +213,8 @@ log_message "installing vuejs module finished"
 
 
 
-cd /var/www/MITA-website || {
-  log_message "Failed to navigate to /var/www/MITA-website"
+cd /var/www/MiTA-website || {
+  log_message "Failed to navigate to /var/www/MiTA-website"
   exit 1
 }
 
