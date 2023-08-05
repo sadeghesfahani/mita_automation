@@ -181,11 +181,53 @@ cd /var/www/Mita_The_Netherlands || {
 docker compose -f ./backend/docker-compose.prod.yml up -d
 
 
-#cd /var/www/Mitanor_frontend || {
-#  log_message "Failed to navigate to /var/www/Mitanor_frontend"
-#  exit 1
-#}
-#
-#npm install
-#npm run build
 
+
+cd /var/www/Mitanor_frontend || {
+  log_message "Failed to navigate to /var/www/Mitanor_frontend"
+  exit 1
+}
+
+
+log_message "installing vuejs module started"
+export NODE_OPTIONS=--openssl-legacy-provider
+npm install
+npm run build
+
+sudo cp -r ./dist/* /var/www/clever-safety/html
+
+log_message "installing vuejs module finished"
+
+
+
+cd /var/www/MITA-website || {
+  log_message "Failed to navigate to /var/www/MITA-website"
+  exit 1
+}
+
+log_message "installing nextJS module started"
+npm install
+npm run build
+sudo apt install pm2 -y
+pm2 start npm --name "mita-website" -- start -p 3000
+pm2 startup
+pm2 save
+log_message "installing nextJS module finished"
+
+
+sudo rm /etc/nginx/sites-enabled/default
+sudo rm /etc/nginx/sites-available/default
+sudo cp ./main.conf /etc/nginx/sites-available/default
+sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+
+sudo nginx -t
+sudo systemctl restart nginx
+
+
+# install certbot
+sudo apt-get install software-properties-common
+sudo add-apt-repository ppa:certbot/certbot
+sudo apt-get update
+sudo apt-get install certbot
+sudo apt-get install python3-certbot-nginx
+sudo certbot --nginx -d app.clever-safety.com
