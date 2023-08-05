@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "name": "mita_panel_version_2",
+      "script": "npm",
+      "args": "start"
+    }
+  ]
+}

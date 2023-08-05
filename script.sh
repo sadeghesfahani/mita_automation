@@ -222,9 +222,10 @@ log_message "installing nextJS module started"
 sudo npm install --force
 sudo npm run build
 sudo npm install pm2@latest -g
-pm2 start npm --name "mita-website" -- start -p 3000
-pm2 startup
-pm2 save
+sudo cp ./utils/process.json /var/www/MiTA-website
+sudo pm2 start process.json
+sudo pm2 startup
+sudo pm2 save
 log_message "installing nextJS module finished"
 
 
