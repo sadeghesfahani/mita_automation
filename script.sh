@@ -156,3 +156,12 @@ sudo systemctl enable docker || {
   exit 1
 }
 log_message "Running at the startup is set"
+
+
+# install nodejs
+
+sudo apt update
+sudo apt install nodejs npm -y
+sudo apt install npm -y
+
+
