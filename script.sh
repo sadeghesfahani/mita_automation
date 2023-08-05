@@ -164,4 +164,28 @@ sudo apt update
 sudo apt install nodejs npm -y
 sudo apt install npm -y
 
+# make projects ready to run
+
+cd /var/www/MITA || {
+  log_message "Failed to navigate to /var/www/MITA"
+  exit 1
+}
+
+docker-compose up -d
+
+
+cd /var/www/Mita_The_Netherlands || {
+  log_message "Failed to navigate to /var/www/Mita_The_Netherlands"
+  exit 1
+}
+docker-compose -f ./backend/docker-compose.prod.yml up -d
+
+
+#cd /var/www/Mitanor_frontend || {
+#  log_message "Failed to navigate to /var/www/Mitanor_frontend"
+#  exit 1
+#}
+#
+#npm install
+#npm run build
 
