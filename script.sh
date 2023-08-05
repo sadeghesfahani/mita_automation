@@ -171,14 +171,14 @@ cd /var/www/MITA || {
   exit 1
 }
 
-docker-compose up -d
+docker compose up -d
 
 
 cd /var/www/Mita_The_Netherlands || {
   log_message "Failed to navigate to /var/www/Mita_The_Netherlands"
   exit 1
 }
-docker-compose -f ./backend/docker-compose.prod.yml up -d
+docker compose -f ./backend/docker-compose.prod.yml up -d
 
 
 #cd /var/www/Mitanor_frontend || {
