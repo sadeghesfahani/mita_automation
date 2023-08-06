@@ -209,20 +209,25 @@ sudo cp -r ./dist/* /var/www/clever-safety/html
 
 log_message "installing vuejs module finished"
 
+log_message "returning to the original directory"
+cd "$ORIGINAL_DIR" || {
+  log_message "Failed to navigate to $ORIGINAL_DIR"
+  exit 1
+}
+
+log_message "copying process.json to /var/www/MiTA-website"
+
+sudo cp ./utils/process.json /var/www/MiTA-website
 cd /var/www/MiTA-website || {
   log_message "Failed to navigate to /var/www/MiTA-website"
   exit 1
 }
 
 log_message "installing nextJS module started"
-cd "$ORIGINAL_DIR" || {
-  log_message "Failed to navigate to $ORIGINAL_DIR"
-  exit 1
-}
+
 sudo npm install --force
 sudo npm run build
 sudo npm install pm2@latest -g
-sudo cp ./utils/process.json /var/www/MiTA-website
 sudo pm2 start process.json
 sudo pm2 startup
 sudo pm2 save
