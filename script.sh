@@ -3,6 +3,9 @@
 # Log file path
 log_file="/var/log/deploy_automation.log"
 
+# Save where the script was executed from
+ORIGINAL_DIR=$(pwd)
+
 # Log a message to the log file and show it in console
 log_message() {
   message="$1"
@@ -157,7 +160,6 @@ sudo systemctl enable docker || {
 }
 log_message "Running at the startup is set"
 
-
 # install nodejs
 
 sudo apt update
@@ -173,15 +175,11 @@ cd /var/www/MITA || {
 
 docker compose up -d
 
-
 cd /var/www/Mita_The_Netherlands || {
   log_message "Failed to navigate to /var/www/Mita_The_Netherlands"
   exit 1
 }
 docker compose -f ./backend/docker-compose.prod.yml up -d
-
-
-
 
 cd /var/www/Mitanor_frontend || {
   log_message "Failed to navigate to /var/www/Mitanor_frontend"
@@ -203,7 +201,7 @@ else
     log_message "Successfully created the directory."
   else
     log_message "Cannot create the directory."
-    exit 1  # Exit the script with an error status.
+    exit 1 # Exit the script with an error status.
   fi
 fi
 
@@ -211,14 +209,16 @@ sudo cp -r ./dist/* /var/www/clever-safety/html
 
 log_message "installing vuejs module finished"
 
-
-
 cd /var/www/MiTA-website || {
   log_message "Failed to navigate to /var/www/MiTA-website"
   exit 1
 }
 
 log_message "installing nextJS module started"
+cd "$ORIGINAL_DIR" || {
+  log_message "Failed to navigate to $ORIGINAL_DIR"
+  exit 1
+}
 sudo npm install --force
 sudo npm run build
 sudo npm install pm2@latest -g
@@ -228,7 +228,6 @@ sudo pm2 startup
 sudo pm2 save
 log_message "installing nextJS module finished"
 
-
 sudo rm /etc/nginx/sites-enabled/default
 sudo rm /etc/nginx/sites-available/default
 sudo cp ./main.conf /etc/nginx/sites-available/default
@@ -237,11 +236,10 @@ sudo ln /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 sudo nginx -t
 sudo systemctl restart nginx
 
-
 # install certbot
-sudo apt-get install software-properties-common
-sudo add-apt-repository ppa:certbot/certbot
-sudo apt-get update
-sudo apt-get install certbot
-sudo apt-get install python3-certbot-nginx
-sudo certbot --nginx -d app.clever-safety.com
+#sudo apt-get install software-properties-common -y
+#sudo add-apt-repository ppa:certbot/certbot
+#sudo apt-get update
+#sudo apt-get install certbot -y
+#sudo apt-get install python3-certbot-nginx -y
+#sudo certbot --nginx -d app.clever-safety.com
